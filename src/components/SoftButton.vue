@@ -31,10 +31,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
-    getClasses: (variant, color, size, fullWidth, active) => {
-      let colorValue, sizeValue, fullWidthValue, activeValue;
+    getClasses: (variant, color, size, fullWidth, active, disabled) => {
+      let colorValue, sizeValue, fullWidthValue, activeValue, disabledValue;
 
       // Setting the button variant and color
       if (variant === "gradient") {
@@ -51,7 +55,9 @@ export default {
 
       activeValue = active ? `active` : null;
 
-      return `${colorValue} ${sizeValue} ${fullWidthValue} ${activeValue}`;
+      disabledValue = disabled ? `disabled` : null;
+
+      return `${colorValue} ${sizeValue} ${fullWidthValue} ${activeValue} ${disabledValue}`;
     },
   },
 };

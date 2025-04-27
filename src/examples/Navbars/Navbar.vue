@@ -6,15 +6,12 @@
     data-scroll="true"
   >
     <div class="px-3 py-1 container-fluid">
-      <SoftAlert
-                    v-if="alertMessage"
-                    :color="alertColor"
-                    icon="ni ni-check-bold"
-                    dismissible
-                    class="m-auto"
-                  >
-                    {{ alertMessage }}
-                  </SoftAlert>
+      <!-- SweetAlert Notification -->
+      <div v-if="alertMessage">
+        <!-- Replace the SoftAlert component with SweetAlert -->
+        <p>{{ alertMessage }}</p>
+      </div>
+
       <breadcrumbs :currentPage="currentRouteName" :textWhite="textWhite" />
       <div
         class="mt-2 collapse navbar-collapse mt-sm-0 me-md-0 me-sm-4"
@@ -26,13 +23,11 @@
           :class="this.$store.state.isRTL ? 'me-md-auto' : 'ms-md-auto'"
         ></div>
         <ul class="navbar-nav justify-content-end">
-        
-         
           <li class="nav-item d-flex ps-2 align-items-center">
-  <h6 :style="{ color: textColor }">
-    {{ username }}
-  </h6>
-</li>
+            <h6 :style="{ color: textColor }">
+              {{ username }}
+            </h6>
+          </li>
 
           <li
             class="nav-item dropdown ms-1 ms-sm-0 mb-1 d-flex align-items-center"
@@ -119,27 +114,25 @@
     </div>
   </nav>
 </template>
+
 <script>
 import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapActions } from "vuex";
-import SoftAlert from "@/components/SoftAlert.vue";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 export default {
-
   name: "navbar",
   data() {
     return {
       textColor: "black",
       showMenu: false,
-      alertMessage:"",
-      alertColor:"danger"
-
-      
+      alertMessage: "",
+      alertColor: "danger",
     };
   },
   watch: {
-  "$route.path": "updateTextColor"
-},
+    "$route.path": "updateTextColor",
+  },
   props: ["minNav", "textWhite"],
   created() {
     this.minNav;
@@ -148,89 +141,93 @@ export default {
     ...mapMutations(["navbarMinimize", "toggleConfigurator"]),
     ...mapActions(["toggleSidebarColor"]),
     updateTextColor() {
-    this.textColor = this.$route.path === "/profile" ? "white" : "black";
-  },
+      this.textColor = this.$route.path === "/profile" ? "white" : "black";
+    },
     async logout() {
-  try {
-    const token = localStorage.getItem("token");
+      try {
+        const token = localStorage.getItem("token");
 
-    if (!token) {
-      this.alertColor = "warning";
-      this.alertMessage = "Anda sudah logout.";
-      setTimeout(() => {
-        this.$router.push("/sign-in");
-      }, 2000);
-      return;
-    }
+        if (!token) {
+          this.alertColor = "warning";
+          this.alertMessage = "Anda sudah logout.";
+          Swal.fire({
+            icon: "warning",
+            title: "Anda sudah logout.",
+            timer: 2000,
+            showConfirmButton: false,
+          }).then(() => {
+            this.$router.push("/");
+          });
+          return;
+        }
 
-    await this.$axios.post(
-      "/logout",
-      {},
-      {
-        headers: { Authorization: `Bearer ${token}` },
+        await this.$axios.post(
+          "/logout",
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        // Hapus token dan data sesi dari localStorage
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("user");
+        localStorage.removeItem("session_expire");
+
+        // Tampilkan alert sukses dan redirect setelah beberapa detik
+        this.alertColor = "success";
+        this.alertMessage = "Logout berhasil! Redirecting...";
+
+        Swal.fire({
+          icon: "success",
+          title: "Logout berhasil!",
+          text: "Redirecting...",
+          timer: 2000,
+          showConfirmButton: false,
+        }).then(() => {
+          this.$router.push("/");
+        });
+      } catch (error) {
+        console.error("Logout gagal:", error);
+
+        // Tetap hapus token jika gagal logout untuk keamanan
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("user");
+        localStorage.removeItem("session_expire");
+
+        // Tampilkan alert error
+        this.alertColor = "danger";
+        this.alertMessage = "Logout gagal! Redirecting...";
+
+        Swal.fire({
+          icon: "error",
+          title: "Logout gagal!",
+          text: "Redirecting...",
+          timer: 2000,
+          showConfirmButton: false,
+        }).then(() => {
+          this.$router.push("/");
+        });
       }
-    );
-
-    // Hapus token dan data sesi dari localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("user");
-    localStorage.removeItem("session_expire");
-
-    // Tampilkan alert sukses dan redirect setelah beberapa detik
-    this.alertColor = "success";
-    this.alertMessage = "Logout berhasil! Redirecting...";
-    setTimeout(() => {
-      this.$router.push("/sign-in");
-    }, 2000);
-    
-  } catch (error) {
-    console.error("Logout gagal:", error);
-    
-    // Tetap hapus token jika gagal logout untuk keamanan
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("user");
-    localStorage.removeItem("session_expire");
-
-    // Tampilkan alert error
-    this.alertColor = "danger";
-    this.alertMessage = "Logout gagal! Redirecting...";
-    setTimeout(() => {
-      this.$router.push("/sign-in");
-    }, 2000);
-  }
-},
+    },
     toggleSidebar() {
       this.toggleSidebarColor("bg-white");
       this.navbarMinimize();
     },
   },
   components: {
-    Breadcrumbs,SoftAlert
+    Breadcrumbs,
   },
   computed: {
     currentRouteName() {
       return this.$route.name;
     },
     username() {
-    const user = localStorage.getItem("user");
-    return user ? JSON.parse(user).username : "Username";
-  }
-  },
-  updated() {
-    const navbar = document.getElementById("navbarBlur");
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 10 && this.$store.state.isNavFixed) {
-        navbar.classList.add("blur");
-        navbar.classList.add("position-sticky");
-        navbar.classList.add("shadow-blur");
-      } else {
-        navbar.classList.remove("blur");
-        navbar.classList.remove("position-sticky");
-        navbar.classList.remove("shadow-blur");
-      }
-    });
+      const user = localStorage.getItem("user");
+      return user ? JSON.parse(user).username : "Username";
+    },
   },
 };
 </script>
