@@ -1,9 +1,40 @@
 <template>
+    <nav class="navbar navbar-light bg-white shadow-sm p-3">
   <div class="container-fluid">
+    <div class="row w-100 align-items-center">
+      <!-- Logo + Nama Sistem -->
+      <div class="col-12 col-md-6 d-flex align-items-center justify-content-center justify-content-md-start mb-3 mb-md-0">
+        <img
+          src="/favicon.png"
+          alt="Land Mapping Logo"
+          style="max-width: 40px; height: auto;"
+          class="me-2"
+        />
+        <h5 class="mb-0">Land Mapping System</h5>
+      </div>
+
+      <!-- Tombol Sign In -->
+      <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
+        <button
+          class="btn btn-primary"
+          @click="$router.push('/sign-in')"
+        >
+          Sign In
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+  <div class="container-fluid">
+    
     <div class="row">
       <!-- Map -->
-      <div class="col-12 mb-4">
+      <div class="col-12 mb-4 mt-3">
         <div id="map" style="height: 500px" class="rounded shadow"></div>
+        <button class="btn btn-success mt-3" @click="$router.push('/')">
+          Kembali
+        </button>
       </div>
 
       <!-- Informasi Lahan -->
@@ -13,16 +44,46 @@
           <div class="card-body table-responsive">
             <table class="table table-bordered mb-0">
               <tbody>
-                <tr><th>Lahan</th><td>{{ lahan?.lahan }}</td></tr>
-                <tr><th>Pemilik Lahan</th><td>{{ layerGroupName }}</td></tr>
-                <tr><th>Deskripsi</th><td>{{ lahan?.deskripsi }}</td></tr>
-                <tr><th>Luas</th><td>{{ lahan?.luas }} m²</td></tr>
-                <tr><th>Latitude</th><td>{{ lahan?.lat }}</td></tr>
-                <tr><th>Longitude</th><td>{{ lahan?.lon }}</td></tr>
-                <tr><th>Desa</th><td>{{ lahan?.desa }}</td></tr>
-                <tr><th>Kecamatan</th><td>{{ lahan?.kecamatan }}</td></tr>
-                <tr><th>Kabupaten</th><td>{{ lahan?.kabupaten }}</td></tr>
-                <tr><th>Provinsi</th><td>{{ lahan?.provinsi }}</td></tr>
+                <tr>
+                  <th>Lahan</th>
+                  <td>{{ lahan?.lahan }}</td>
+                </tr>
+                <tr>
+                  <th>Pemilik Lahan</th>
+                  <td>{{ layerGroupName }}</td>
+                </tr>
+                <tr>
+                  <th>Deskripsi</th>
+                  <td>{{ lahan?.deskripsi }}</td>
+                </tr>
+                <tr>
+                  <th>Luas</th>
+                  <td>{{ lahan?.luas }} m²</td>
+                </tr>
+                <tr>
+                  <th>Latitude</th>
+                  <td>{{ lahan?.lat }}</td>
+                </tr>
+                <tr>
+                  <th>Longitude</th>
+                  <td>{{ lahan?.lon }}</td>
+                </tr>
+                <tr>
+                  <th>Desa</th>
+                  <td>{{ lahan?.desa }}</td>
+                </tr>
+                <tr>
+                  <th>Kecamatan</th>
+                  <td>{{ lahan?.kecamatan }}</td>
+                </tr>
+                <tr>
+                  <th>Kabupaten</th>
+                  <td>{{ lahan?.kabupaten }}</td>
+                </tr>
+                <tr>
+                  <th>Provinsi</th>
+                  <td>{{ lahan?.provinsi }}</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -48,20 +109,34 @@
         </div>
       </div>
 
-      <div v-else-if="Object.keys(groupedKarakteristik).length === 0" class="text-center mt-3">
-        <img src="/empty-state-karakteristik.png" alt="Tidak ada data"
-             style="min-width: 200px; max-width: 250px; height: auto" />
-        <p class="mt-2 text-muted">Belum ada data karakteristik untuk lahan ini.</p>
+      <div
+        v-else-if="Object.keys(groupedKarakteristik).length === 0"
+        class="text-center mt-3"
+      >
+        <img
+          src="/empty-state-karakteristik.png"
+          alt="Tidak ada data"
+          style="min-width: 200px; max-width: 250px; height: auto"
+        />
+        <p class="mt-2 text-muted">
+          Belum ada data karakteristik untuk lahan ini.
+        </p>
       </div>
 
-      <div v-else v-for="(group, kualitasId) in groupedKarakteristik"
-           :key="kualitasId" class="col-12 mb-3">
+      <div
+        v-else
+        v-for="(group, kualitasId) in groupedKarakteristik"
+        :key="kualitasId"
+        class="col-12 mb-3"
+      >
         <div class="card">
           <div class="card-body">
             <h5 class="mb-0">{{ group.deskripsi }} ({{ group.kode }})</h5>
             <ul class="list-unstyled mb-0 mt-2">
-              <li v-for="item in group.karakteristik"
-                  :key="item.karakteristik_lahan">
+              <li
+                v-for="item in group.karakteristik"
+                :key="item.karakteristik_lahan"
+              >
                 <strong>{{ item.karakteristik_lahan }}:</strong>
                 {{ item.nilai }}
               </li>
@@ -72,12 +147,13 @@
     </div>
   </div>
 </template>
-
-
-<script>
+  
+  
+  <script>
 import axios from "axios";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { mapMutations } from "vuex";
 
 export default {
   name: "DetailLahanView",
@@ -93,6 +169,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["toggleEveryDisplay", "toggleHideConfig"]),
     async fetchLahan() {
       const id = this.$route.params.id;
       const { data } = await axios.get(`/lahan/${id}`);
@@ -182,7 +259,8 @@ export default {
           const kualitasId = item.karakteristik.id_kualitas_lahan;
           if (!grouped[kualitasId]) {
             grouped[kualitasId] = {
-              deskripsi: kualitasMap[kualitasId]?.deskripsi || "Tidak diketahui",
+              deskripsi:
+                kualitasMap[kualitasId]?.deskripsi || "Tidak diketahui",
               kode: kualitasMap[kualitasId]?.kode || "-",
               karakteristik: [],
             };
@@ -197,7 +275,8 @@ export default {
           const kualitasId = item.karakteristik.id_kualitas_lahan;
           if (!grouped[kualitasId]) {
             grouped[kualitasId] = {
-              deskripsi: kualitasMap[kualitasId]?.deskripsi || "Tidak diketahui",
+              deskripsi:
+                kualitasMap[kualitasId]?.deskripsi || "Tidak diketahui",
               kode: kualitasMap[kualitasId]?.kode || "-",
               karakteristik: [],
             };
@@ -247,12 +326,10 @@ export default {
 
         const layer_groups = response.data.data;
 
-
         this.layer_groups = layer_groups.map((item) => ({
           id_layer_groups: item.id_layer_groups,
           layer_groups: item.layer_groups,
         }));
-
       } catch (error) {
         console.error("Error fetching layer groups:", error);
       } finally {
@@ -260,13 +337,21 @@ export default {
       }
     },
   },
+  created() {
+    this.toggleEveryDisplay();
+    this.toggleHideConfig();
+  },
+  beforeUnmount() {
+    this.toggleEveryDisplay();
+    this.toggleHideConfig();
+  },
   mounted() {
     this.fetchLahan();
   },
 };
 </script>
-
-<style scoped>
+  
+  <style scoped>
 #map {
   width: 100%;
   border: 1px solid #ccc;
@@ -295,3 +380,4 @@ img {
   }
 }
 </style>
+  

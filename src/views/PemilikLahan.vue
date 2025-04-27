@@ -25,8 +25,6 @@
         />
       </div>
 
-
-
       <vue3-datatable
         :rows="rows"
         :columns="cols"
@@ -43,38 +41,75 @@
       >
         <template #aksi="slotProps">
           <div class="d-flex flex-column gap-1">
-            <button class="btn btn-sm btn-info text-white" @click="editItem(slotProps.value)">
+            <button
+              title="Edit"
+              class="btn btn-sm btn-info text-white"
+              @click="editItem(slotProps.value)"
+            >
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-danger text-white" @click="confirmDelete(slotProps.value)">
+            <button
+              title="Delete"
+              class="btn btn-sm btn-danger text-white"
+              @click="confirmDelete(slotProps.value)"
+            >
               <i class="fas fa-trash"></i>
             </button>
-            <button class="btn btn-sm btn-secondary text-white" @click="goToLahan(slotProps.value)">
-              <i class="fas fa-key"></i> {{ slotProps.value.total_lahan }}
+            <button
+              title="Lihat Lahan"
+              class="btn btn-sm btn-success text-white"
+              @click="goToLahan(slotProps.value)"
+            >
+              <i class="fas fa-map me-1"></i> {{ slotProps.value.total_lahan }}
+            </button>
+            <button
+              title="Reset Password"
+              class="btn btn-sm btn-secondary text-white"
+              @click="openResetPasswordModal(slotProps.value.username)"
+            >
+              <i class="fas fa-key"></i>
             </button>
           </div>
         </template>
 
         <template #aktif="slotProps">
-          <span v-if="slotProps.value.aktif === 'Ya'" class="badge bg-success">Aktif</span>
+          <span v-if="slotProps.value.aktif === 'Ya'" class="badge bg-success"
+            >Aktif</span
+          >
           <span v-else class="badge bg-danger">Tidak Aktif</span>
         </template>
       </vue3-datatable>
     </card-table>
 
     <!-- Modal Tambah -->
-    <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true" ref="addModalRef">
+    <div
+      class="modal fade"
+      id="addModal"
+      tabindex="-1"
+      aria-hidden="true"
+      ref="addModalRef"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header bg-success text-white">
             <h5 class="modal-title">Tambah Pemilik Lahan</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Tutup"
+            ></button>
           </div>
           <div class="modal-body">
             <form @submit.prevent="submitAdd">
               <div class="mb-2">
                 <label class="form-label">Username</label>
-                <input type="text" v-model="addForm.username" class="form-control" required />
+                <input
+                  type="text"
+                  v-model="addForm.username"
+                  class="form-control"
+                  required
+                />
               </div>
               <div class="mb-2">
                 <label class="form-label">Password</label>
@@ -100,23 +135,47 @@
               </div>
               <div class="mb-2">
                 <label class="form-label">Nama</label>
-                <input type="text" v-model="addForm.nama" class="form-control" required />
+                <input
+                  type="text"
+                  v-model="addForm.nama"
+                  class="form-control"
+                  required
+                />
               </div>
               <div class="mb-2">
                 <label class="form-label">Email</label>
-                <input type="email" v-model="addForm.email" class="form-control" required />
+                <input
+                  type="email"
+                  v-model="addForm.email"
+                  class="form-control"
+                  required
+                />
               </div>
               <div class="mb-2">
                 <label class="form-label">Telepon</label>
-                <input type="text" v-model="addForm.telepon" class="form-control" required />
+                <input
+                  type="text"
+                  v-model="addForm.telepon"
+                  class="form-control"
+                  required
+                />
               </div>
               <div class="mb-2">
                 <label class="form-label">Deskripsi</label>
-                <textarea v-model="addForm.deskripsi" class="form-control" required></textarea>
+                <textarea
+                  v-model="addForm.deskripsi"
+                  class="form-control"
+                  required
+                ></textarea>
               </div>
               <div class="mb-2">
                 <label class="form-label">Foto</label>
-                <input type="file" @change="onFotoChange" class="form-control" required />
+                <input
+                  type="file"
+                  @change="onFotoChange"
+                  class="form-control"
+                  required
+                />
               </div>
               <div class="text-end">
                 <button type="submit" class="btn btn-success">Simpan</button>
@@ -128,52 +187,186 @@
     </div>
 
     <!-- Modal Konfirmasi Delete -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true" ref="deleteModalRef">
+    <div
+      class="modal fade"
+      id="deleteModal"
+      tabindex="-1"
+      aria-hidden="true"
+      ref="deleteModalRef"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header bg-danger text-white">
             <h5 class="modal-title">Konfirmasi Hapus</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Tutup"
+            ></button>
           </div>
           <div class="modal-body">
             Yakin ingin menghapus layer group
-            <strong>{{ itemToDelete?.layer_groups }}</strong>?
+            <strong>{{ itemToDelete?.layer_groups }}</strong
+            >?
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="button" class="btn btn-danger" @click="deleteItem">Hapus</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button type="button" class="btn btn-danger" @click="deleteItem">
+              Hapus
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Modal Edit -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true" ref="editModalRef">
+    <!-- Modal Edit -->
+    <div
+      class="modal fade"
+      id="editModal"
+      tabindex="-1"
+      aria-hidden="true"
+      ref="editModalRef"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header bg-info text-white">
-            <h5 class="modal-title">Edit Layer Group</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            <h5 class="modal-title">Edit Pemilik Lahan</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Tutup"
+            ></button>
           </div>
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label class="form-label">Nama Layer Group</label>
-                <input type="text" v-model="editForm.layer_groups" class="form-control" />
+                <label class="form-label">Username</label>
+                <input
+                  type="text"
+                  v-model="editForm.username"
+                  class="form-control"
+                  disabled
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nama</label>
+                <input
+                  type="text"
+                  v-model="editForm.nama"
+                  class="form-control"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  v-model="editForm.email"
+                  class="form-control"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Telepon</label>
+                <input
+                  type="text"
+                  v-model="editForm.telepon"
+                  class="form-control"
+                />
               </div>
               <div class="mb-3">
                 <label class="form-label">Deskripsi</label>
-                <textarea v-model="editForm.deskripsi" class="form-control"></textarea>
+                <textarea
+                  v-model="editForm.deskripsi"
+                  class="form-control"
+                ></textarea>
               </div>
               <div class="form-check form-switch">
-                <input type="checkbox" class="form-check-input" v-model="editForm.aktif" />
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  v-model="editForm.aktif"
+                />
                 <label class="form-check-label">Aktif</label>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="button" class="btn btn-info" @click="submitEdit">Simpan</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button type="button" class="btn btn-info" @click="submitEdit">
+              Simpan
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Reset Password -->
+    <div
+      class="modal fade"
+      id="resetPasswordModal"
+      tabindex="-1"
+      aria-hidden="true"
+      ref="resetPasswordModalRef"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title">Reset Password</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Tutup"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <SoftAlert
+              v-if="alertMessage"
+              :color="alertColor"
+              icon="ni ni-check-bold"
+              dismissible
+            >
+              {{ alertMessage }}
+            </SoftAlert>
+            <form @submit.prevent="submitResetPassword">
+              <div class="mb-2">
+                <label class="form-label">Password Baru</label>
+                <input
+                  type="password"
+                  v-model="resetPasswordForm.new_password"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Konfirmasi Password Baru</label>
+                <input
+                  type="password"
+                  v-model="resetPasswordForm.confirm_password"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="text-end">
+                <button type="submit" class="btn btn-success">
+                  Reset Password
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -199,6 +392,11 @@ export default {
   },
   data() {
     return {
+      resetPasswordForm: {
+        username: "",
+        new_password: "",
+        confirm_password: "",
+      },
       rows: [],
       loading: true,
       total_rows: 0,
@@ -254,15 +452,13 @@ export default {
         const layer_groups = response.data.data;
         const meta = response.data.meta;
 
-
-
         this.rows = layer_groups.map((item) => ({
           id_layer_groups: item.id_layer_groups,
           layer_groups: item.layer_groups,
           deskripsi: item.deskripsi,
           aktif: item.aktif,
           username: item.username,
-          total_lahan: item.total_lahan
+          total_lahan: item.total_lahan,
         }));
 
         this.total_rows = meta.total;
@@ -273,7 +469,6 @@ export default {
       }
     },
     goToLahan(item) {
-  
       this.$router.push(`/lahan?id_layer_groups=${item.id_layer_groups}`);
     },
 
@@ -314,9 +509,12 @@ export default {
     async deleteItem() {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`/layer-groups/${this.itemToDelete.id_layer_groups}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.delete(
+          `/layer-groups/${this.itemToDelete.id_layer_groups}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         this.alertColor = "success";
         this.alertMessage = "Data berhasil dihapus.";
         this.getLayerGroups();
@@ -330,31 +528,46 @@ export default {
       }
     },
 
+    // Open Edit Modal
     editItem(item) {
       this.editForm.id = item.id_layer_groups;
-      this.editForm.layer_groups = item.layer_groups;
+      this.editForm.username = item.username;
+      this.editForm.nama = item.nama;
+      this.editForm.email = item.email;
+      this.editForm.telepon = item.telepon;
       this.editForm.deskripsi = item.deskripsi;
       this.editForm.aktif = item.aktif === "Ya";
+
       const modal = new bootstrap.Modal(this.$refs.editModalRef);
       modal.show();
     },
 
+    // Submit Edit
+    // Submit Edit
     async submitEdit() {
       const payload = {
-        layer_groups: this.editForm.layer_groups,
+        id: this.editForm.id,
+        username: this.editForm.username,
+        nama: this.editForm.nama,
+        email: this.editForm.email,
+        telepon: this.editForm.telepon,
         deskripsi: this.editForm.deskripsi,
         aktif: this.editForm.aktif ? "Ya" : "Tidak",
       };
+
       try {
         const token = localStorage.getItem("token");
-        await axios.put(`/layer-groups/${this.editForm.id}`, payload, {
+
+        // Send request to update owner
+        await axios.post("/update-owner", payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+        // Success - Hide modal and refresh data
         const modal = bootstrap.Modal.getInstance(this.$refs.editModalRef);
         modal.hide();
-        document.activeElement.blur();
         this.alertColor = "success";
-        this.alertMessage = "Data berhasil disimpan.";
+        this.alertMessage = "Data berhasil diperbarui.";
         this.getLayerGroups();
         this.hideAlert();
       } catch (error) {
@@ -363,7 +576,6 @@ export default {
         this.alertMessage = "Gagal menyimpan data.";
       }
     },
-
     openAddModal() {
       const modal = new bootstrap.Modal(this.$refs.addModalRef);
       modal.show();
@@ -422,6 +634,57 @@ export default {
         console.error("Gagal menambahkan pemilik:", error);
         this.alertColor = "danger";
         this.alertMessage = "Gagal menambahkan pemilik.";
+      }
+    },
+    openResetPasswordModal(username) {
+      this.resetPasswordForm.username = username;
+      const modal = new bootstrap.Modal(this.$refs.resetPasswordModalRef);
+      modal.show();
+    },
+
+    // Fungsi untuk mengirim request reset password
+    async submitResetPassword() {
+      const newPassword = this.resetPasswordForm.new_password.trim();
+      const confirmPassword = this.resetPasswordForm.confirm_password.trim();
+
+      if (newPassword !== confirmPassword) {
+        this.alertColor = "danger";
+        this.alertMessage = "Konfirmasi password tidak cocok.";
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem("token");
+
+        // Kirim request ke endpoint reset-password
+        await axios.post(
+          "/reset-password",
+          {
+            username: this.resetPasswordForm.username,
+            new_password: newPassword,
+            new_password_confirmation: confirmPassword,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        this.alertColor = "success";
+        this.alertMessage = "Password berhasil direset.";
+        this.getLayerGroups(); // Refresh data setelah reset password
+        this.hideAlert();
+
+        // Tutup modal setelah sukses
+        const modal = bootstrap.Modal.getInstance(
+          this.$refs.resetPasswordModalRef
+        );
+        modal.hide();
+      } catch (error) {
+        console.error("Gagal mereset password:", error);
+        this.alertColor = "danger";
+        this.alertMessage = "Gagal mereset password.";
       }
     },
   },

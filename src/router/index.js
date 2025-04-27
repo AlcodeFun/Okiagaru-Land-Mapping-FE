@@ -16,6 +16,7 @@ import EditPolygonDraw from "../views/EditPolygonDraw.vue";
 import EditPolygonRealtime from "../views/EditPolygonRealtime.vue";
 import EditPolygonManual from "../views/EditPolygonManual.vue";
 import LahanFormEdit from "../views/LahanFormEdit.vue";
+import LahanDetail from "../views/LahanDetail.vue";
 const routes = [
   {
     path: "/sign-in",
@@ -43,7 +44,7 @@ const routes = [
   },
   {
     path: "/lahan",
-    name:"Lahan",
+    name: "Lahan",
     component: Lahan,
     meta: { requiresAuth: true },
   },
@@ -52,6 +53,12 @@ const routes = [
     name: "DetailLahan",
     component: ViewLahan,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/lahan/detail/:id",
+    name: "Lahan Detail",
+    component: LahanDetail,
+    meta: { requiresGuest: true },
   },
   {
     path: "/lahan/form",
@@ -127,7 +134,7 @@ const routes = [
     name: "Sign In",
     component: SignIn,
     meta: { requiresGuest: true },
-  }
+  },
 ];
 
 const router = createRouter({

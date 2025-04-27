@@ -57,15 +57,14 @@
                         variant="gradient"
                         color="success"
                         full-width
-                        :loading="isLoading"
                         @click.prevent="login"
+                        :disabled="isLoading"
                       >
                         Sign in
                       </SoftButton>
                     </div>
                   </form>
                 </div>
-      
               </div>
             </div>
             <div class="col-md-6">
@@ -146,7 +145,6 @@ export default {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
         localStorage.setItem("user", JSON.stringify(user));
-       
 
         this.alertColor = "success";
         this.alertMessage = "Login berhasil! Redirecting...";
@@ -161,8 +159,20 @@ export default {
       } catch (error) {
         console.error("Login error:", error);
         this.alertColor = "danger";
-        this.alertMessage =
-          error.response?.data?.message || "Login gagal, coba lagi.";
+        if (this.username === "" || this.password === "") {
+          this.alertMessage = "Username dan password tidak boleh kosong.";
+        } else if (error.response?.status === 401) {
+          this.alertMessage = "Username atau password salah.";
+        } else if (error.response?.status === 422) {
+          this.alertMessage =
+            error.response?.data?.errors.username[0] ||
+            error.response?.data?.errors.password[0] ||
+            "Login gagal, coba lagi.";
+        } else if (error.response?.status === 500) {
+          this.alertMessage = "Server error, coba lagi nanti.";
+        } else
+          this.alertMessage =
+            error.response?.data?.errors.login[0] || "Login gagal, coba lagi.";
       } finally {
         this.isLoading = false;
       }

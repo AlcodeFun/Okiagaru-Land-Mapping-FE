@@ -68,7 +68,7 @@
               @click="confirmDelete(slotProps.value)"
               title="Delete Lahan"
             >
-              <i style="font-size: 15px;" class="fas fa-trash"></i>
+              <i style="font-size: 15px" class="fas fa-trash"></i>
             </button>
           </div>
         </template>
@@ -83,7 +83,6 @@
     </card-table>
 
     <!-- Modal Edit Polygon -->
-     
 
     <!-- Modal Konfirmasi Hapus -->
     <div
@@ -300,9 +299,6 @@
         </div>
       </div>
     </div>
-
-
-
   </div>
 </template>
 
@@ -372,6 +368,8 @@ export default {
             search: this.params.search,
             sort_column: this.params.sort_column,
             sort_direction: this.params.sort_direction,
+            // Ambil dari query string route seperti ?id_layer_groups=1
+            id_layer_groups: this.$route.query.id_layer_groups || undefined,
           },
         });
 
@@ -440,24 +438,24 @@ export default {
       this.selectedEditMethod = method;
     },
     openEditModal(item) {
-  this.selectedEditMethod = null;
-  this.itemToEdit = item; 
-  const modal = new bootstrap.Modal(this.$refs.editModalRef);
-  modal.show();
-},
+      this.selectedEditMethod = null;
+      this.itemToEdit = item;
+      const modal = new bootstrap.Modal(this.$refs.editModalRef);
+      modal.show();
+    },
     goToEditPage() {
       if (!this.selectedEditMethod) return;
       localStorage.setItem("selectedEditMethod", this.selectedEditMethod);
 
       const routes = {
-    draw: `/lahan/edit-draw/${this.itemToEdit.id_lahan}`,
-    realtime: `/lahan/edit-realtime/${this.itemToEdit.id_lahan}`,
-    manual: `/lahan/edit-manual/${this.itemToEdit.id_lahan}`,
-  };
+        draw: `/lahan/edit-draw/${this.itemToEdit.id_lahan}`,
+        realtime: `/lahan/edit-realtime/${this.itemToEdit.id_lahan}`,
+        manual: `/lahan/edit-manual/${this.itemToEdit.id_lahan}`,
+      };
 
-  const modal = bootstrap.Modal.getInstance(this.$refs.editModalRef);
-  modal.hide();
-  this.$router.push(routes[this.selectedEditMethod]);
+      const modal = bootstrap.Modal.getInstance(this.$refs.editModalRef);
+      modal.hide();
+      this.$router.push(routes[this.selectedEditMethod]);
     },
     goToAddPage() {
       if (!this.selectedMethod) return;
@@ -473,7 +471,7 @@ export default {
       modal.hide();
       this.$router.push(routes[this.selectedMethod]);
     },
-   
+
     async deleteItem() {
       try {
         const token = localStorage.getItem("token");
@@ -499,8 +497,8 @@ export default {
     },
     submitAdd() {},
     goToEditForm(item) {
-    this.$router.push(`/lahan/form/edit/${item.id_lahan}`);
-  },
+      this.$router.push(`/lahan/form/edit/${item.id_lahan}`);
+    },
   },
   mounted() {
     this.getLahan();
